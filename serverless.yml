@@ -1,0 +1,83 @@
+service: todo-api
+
+frameworkVersion: '3'
+
+custom:
+  settings:
+    TASK_TABLE: tasks
+    USER_TABLE: user
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  environment: ${self:custom.settings}
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.TASK_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.USER_TABLE}"
+
+functions:
+  createTask:
+    handler: src/tasks/createTask.main
+    events:
+      - http:
+          path: /tasks
+          method: POST
+  getAllTasks:
+    handler: src/tasks/getAllTasks.main
+    events: 
+      - http:
+          path: /tasks
+          method: GET
+  getTask:
+    handler: src/tasks/getTask.main
+    events: 
+      - http:
+          path: /task/{id}
+          method: GET
+  updateTask:
+    handler: src/tasks/updateTask.main
+    events: 
+      - http:
+          path: /task/{id}
+          method: PUT
+  deleteTask:
+    handler: src/tasks/deleteTask.main
+    events: 
+      - http:
+          path: /task/{id}
+          method: DELETE
+
+
+resources:
+  Resources:
+    TaskTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.settings.TASK_TABLE}
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.settings.USER_TABLE}
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
