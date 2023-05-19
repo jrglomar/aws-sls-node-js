@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.335.0",
     "uuid": "^9.0.0"
   }
 }

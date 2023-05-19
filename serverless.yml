@@ -21,6 +21,14 @@ provider:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.USER_TABLE}"
 
 functions:
+  # Secret Endpoint Test
+  getSecret:
+    handler: src/secrets/getSecret.main
+    events:
+      - http:
+          path: /secrets
+          method: GET
+
   # Tasks Endpoints
   createTask:
     handler: src/tasks/createTask.main
