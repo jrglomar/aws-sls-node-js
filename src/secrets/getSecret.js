@@ -1,18 +1,19 @@
 const { buildResponse } = require('../common/response');
 const AWS = require("aws-sdk");
 const client = new AWS.SecretsManager({ region: 'us-east-1' });
-const secretName = 'dev/todo_api_token';
 
 module.exports.main = async (event, context, callback) => {
 
-    return secretValue = await client.getSecretValue({
-        SecretId: secretName
+    const { env, secretName } = event.pathParameters ? JSON.parse(event.pathParameters) : event;
+    const secretIdValue = `${env}/${secretName}`;
+
+    return await client.getSecretValue({
+        SecretId: secretIdValue
     }).promise()
         .then((data) => {
-            const api_token_value = data.SecretString ? JSON.parse(data.SecretString) : data.secretString;
+            const api_token_value = data.SecretString ? JSON.parse(data.SecretString) : JSON.parse({ message: "Invalid credentials" });
             callback(null, buildResponse(201, api_token_value));
         }).catch(err => {
             return buildResponse(null, buildResponse(err.statusCode, err))
         })
-
 };

@@ -26,9 +26,8 @@ functions:
     handler: src/secrets/getSecret.main
     events:
       - http:
-          path: /secrets
+          path: /secrets/{env}/value/{secretName}
           method: GET
-
   # Tasks Endpoints
   createTask:
     handler: src/tasks/createTask.main
@@ -118,5 +117,5 @@ resources:
           - AttributeName: "id"
             KeyType: "HASH"
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
+          ReadCapacityUnits: 1s
           WriteCapacityUnits: 1
