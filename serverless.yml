@@ -1,11 +1,11 @@
 service: todo-api
 
-frameworkVersion: '4'
+frameworkVersion: "4"
 
 custom:
   settings:
     TASK_TABLE: tasks
-    USER_TABLE: user
+    USER_TABLE: users
 
 plugins:
   - serverless-offline
@@ -14,7 +14,9 @@ provider:
   name: aws
   runtime: nodejs20.x
   environment: ${self:custom.settings}
-  region: us-east-1
+  region: ap-southeast-1
+  deploymentBucket:
+    name: todo-api-deployment-bucket
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -33,25 +35,25 @@ functions:
           method: POST
   getAllTasks:
     handler: src/tasks/getAllTasks.main
-    events: 
+    events:
       - http:
           path: /tasks
           method: GET
   getTask:
     handler: src/tasks/getTask.main
-    events: 
+    events:
       - http:
           path: /task/{id}
           method: GET
   updateTask:
     handler: src/tasks/updateTask.main
-    events: 
+    events:
       - http:
           path: /task/{id}
           method: PUT
   deleteTask:
     handler: src/tasks/deleteTask.main
-    events: 
+    events:
       - http:
           path: /task/{id}
           method: DELETE
