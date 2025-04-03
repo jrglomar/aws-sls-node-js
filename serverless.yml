@@ -1,15 +1,18 @@
 service: todo-api
 
-frameworkVersion: '3'
+frameworkVersion: '4'
 
 custom:
   settings:
     TASK_TABLE: tasks
     USER_TABLE: user
 
+plugins:
+  - serverless-offline
+
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs20.x
   environment: ${self:custom.settings}
   region: us-east-1
   iamRoleStatements:
